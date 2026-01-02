@@ -46,7 +46,7 @@ print(f"✅ Web App URL loaded: {WEB_APP_URL[:60]}...")
 print()
 
 PERIOD_DAYS = 200  # Reduced for testing
-YAHOO_TICKERS = ['CSPX.L', 'GLD', 'DX-Y.NYB']  # Reduced for testing
+YAHOO_TICKERS = ['CSPX.L', 'EXUS.L', 'GLD', 'DX-Y.NYB']  # Reduced for testing
 FRED_SERIES = {'DGS10': '10-Year Treasury'}  # Reduced for testing
 V2TX_URL = "https://www.stoxx.com/document/Indices/Current/HistoricalData/h_v2tx.txt"
 
@@ -388,4 +388,5 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc()
         sys.exit(1)
+
 
