@@ -11,7 +11,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4  # Updated to v4
+      uses: actions/checkout@v4
       
     - name: Setup Python
       uses: actions/setup-python@v4
@@ -20,8 +20,10 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip install requests pandas
-        echo "Dependencies installed"
+        echo "Installing Python packages..."
+        pip install yfinance requests pandas
+        echo "Installed packages:"
+        pip list | grep -E "(yfinance|requests|pandas)"
         
     - name: Run market data script
       env:
@@ -29,17 +31,3 @@ jobs:
       run: |
         echo "Starting market data script..."
         python market_data.py
-        echo "Script completed with exit code: $?"
-        
-    - name: Upload debug info on failure
-      if: failure()
-      run: |
-        echo "Workflow failed at $(date)"
-        echo "Creating debug info..."
-        ls -la
-        echo "--- Python version ---"
-        python --version
-        echo "--- Installed packages ---"
-        pip list
-        echo "--- Environment ---"
-        printenv | grep -E "(WEB_APP|GITHUB|RUNNER)" || true
