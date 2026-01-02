@@ -1,3 +1,4 @@
+python
 #!/usr/bin/env python3
 """
 MARKET DATA FETCHER - FULL VERSION
@@ -8,13 +9,25 @@ import os
 import sys
 import requests
 import pandas as pd
-import yfinance as yf
 from datetime import datetime, timedelta
 
 print("=" * 70)
 print("📊 MARKET DATA FETCHER")
 print("=" * 70)
 print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+print()
+
+# ===== CHECK DEPENDENCIES =====
+print("🔍 Checking dependencies...")
+try:
+    import yfinance as yf
+    print("✅ yfinance loaded")
+except ImportError:
+    print("❌ yfinance not installed!")
+    print("Please add 'yfinance' to requirements.txt")
+    sys.exit(1)
+
+print("✅ All dependencies loaded")
 print()
 
 # Get Web App URL
@@ -267,3 +280,4 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc()
         sys.exit(1)
+
