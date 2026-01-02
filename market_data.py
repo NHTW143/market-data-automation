@@ -1,4 +1,3 @@
-python
 #!/usr/bin/env python3
 """
 MARKET DATA FETCHER - FULL VERSION
@@ -280,4 +279,5 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc()
         sys.exit(1)
+
 
