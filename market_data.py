@@ -46,12 +46,15 @@ print(f"✅ Web App URL loaded: {WEB_APP_URL[:60]}...")
 print()
 
 PERIOD_DAYS = 200  # Reduced for testing
-YAHOO_TICKERS = ['CSPX.L', 'EXUS.L', 'GLD', 'DX-Y.NYB', '%5EVIX']  # Reduced for testing
-FRED_SERIES = {'DGS10': '10-Year Treasury'}  # Reduced for testing
+YAHOO_TICKERS = ['CSPX.L', 'EXUS.L', 'GLD', 'DX-Y.NYB', '%5EVIX']
+FRED_SERIES = {
+    'DGS10': '10-Year Treasury',
+    'T10YIE': '10-Year Breakeven Inflation Rate' 
+}
 V2TX_URL = "https://www.stoxx.com/document/Indices/Current/HistoricalData/h_v2tx.txt"
 
 # ===== HELPER FUNCTIONS =====
-def fetch_fred_data(series_id, days_back=30):
+def fetch_fred_data(series_id, days_back=200):
     """Fetch data from FRED"""
     try:
         fred_end = datetime.now().date()
@@ -252,7 +255,7 @@ def main():
     for series_id in FRED_SERIES:
         try:
             print(f"   {series_id}...", end=" ")
-            fred_series_data = fetch_fred_data(series_id, days_back=30)
+            fred_series_data = fetch_fred_data(series_id, days_back=200)
             
             if not fred_series_data.empty:
                 all_data[series_id] = fred_series_data
@@ -388,6 +391,7 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc()
         sys.exit(1)
+
 
 
 
