@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 """
-MARKET DATA FETCHER - SIMPLE VERSION
-Fetches data and sends to Google Sheets
+MARKET DATA FETCHER - ULTRA SIMPLE TEST
 """
 
 import os
 import sys
 import requests
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 
 print("=" * 70)
-print("MARKET DATA FETCHER STARTING")
+print("🚀 MARKET DATA TEST STARTING")
 print("=" * 70)
 print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 print()
@@ -19,46 +18,56 @@ print()
 # Get Web App URL
 WEB_APP_URL = os.environ.get('WEB_APP_URL')
 if not WEB_APP_URL:
-    print("❌ ERROR: WEB_APP_URL not found in environment variables!")
-    print("Check GitHub Secrets → Actions → WEB_APP_URL")
+    print("❌ ERROR: WEB_APP_URL environment variable is empty!")
+    print()
+    print("TO FIX THIS:")
+    print("1. Go to your GitHub repository")
+    print("2. Click 'Settings' → 'Secrets and variables' → 'Actions'")
+    print("3. Click 'New repository secret'")
+    print("4. Name: WEB_APP_URL")
+    print("5. Value: Your Google Apps Script Web App URL")
+    print("6. Click 'Add secret'")
+    print("7. Run this workflow again")
     sys.exit(1)
 
-print(f"✅ Web App URL loaded (first 50 chars): {WEB_APP_URL[:50]}...")
+print(f"✅ Web App URL found (first 60 chars):")
+print(f"   {WEB_APP_URL[:60]}...")
 print()
 
-# ===== TEST 1: SIMPLE CSV =====
-print("🧪 TEST 1: Creating simple test CSV...")
+# Create SIMPLE test data
+print("🧪 Creating test data...")
+test_df = pd.DataFrame({
+    'Date': ['2026-01-02', '2026-01-01'],
+    'CSPX': [733.52, 732.10],
+    'GLD': [397.94, 396.31]
+})
 
-# Create perfect test data
-test_data = {
-    'Date': ['2026-01-02', '2026-01-01', '2025-12-31'],
-    'CSPX': [733.52, 732.10, 738.53],
-    'GLD': [397.94, 396.31, 395.80],
-    'Treasury': [4.12, 4.10, 4.08]
-}
-
-df = pd.DataFrame(test_data)
-csv_data = df.to_csv(index=False)
-
-print(f"Test DataFrame shape: {df.shape}")
-print(f"Columns: {list(df.columns)}")
+print(f"Test DataFrame:")
+print(test_df)
 print()
-print("CSV content:")
+print(f"Shape: {test_df.shape}")
+print(f"Columns: {list(test_df.columns)}")
+print()
+
+# Convert to CSV
+csv_data = test_df.to_csv(index=False)
+print(f"📄 CSV data ({len(csv_data)} characters):")
 print(csv_data)
 print()
 
-# Send test data
-print("📤 Sending test data to Google Sheets...")
-metadata = {
-    "test": "simple_data",
-    "timestamp": datetime.now().isoformat(),
-    "columns": len(df.columns)
-}
-
+# Prepare payload
 payload = {
     "csv_data": csv_data,
-    "metadata": metadata
+    "metadata": {
+        "test": "github_actions",
+        "timestamp": datetime.now().isoformat(),
+        "python_version": sys.version.split()[0]
+    }
 }
+
+print("📤 Sending to Google Sheets...")
+print(f"URL: {WEB_APP_URL[:80]}...")
+print()
 
 try:
     response = requests.post(
@@ -68,22 +77,27 @@ try:
         timeout=30
     )
     
-    print(f"✅ Response status: {response.status_code}")
+    print(f"✅ HTTP Status: {response.status_code}")
     print(f"Response: {response.text}")
+    print()
     
     if response.status_code == 200:
         result = response.json()
         if result.get('success'):
-            print(f"\n🎉 SUCCESS! Test data accepted.")
+            print("🎉 SUCCESS! Data accepted by Google Sheets")
             print(f"Rows added: {result.get('rows_added', 'N/A')}")
-            sys.exit(0)  # Success!
+            print(f"Total historical rows: {result.get('historical_rows', 'N/A')}")
+            sys.exit(0)
         else:
-            print(f"\n❌ Server error: {result.get('error', 'Unknown')}")
+            print("❌ Google Apps Script returned error:")
+            print(f"Error: {result.get('error', 'Unknown')}")
             sys.exit(1)
     else:
-        print(f"\n❌ HTTP error: {response.status_code}")
+        print(f"❌ HTTP Error {response.status_code}")
         sys.exit(1)
         
 except Exception as e:
-    print(f"\n❌ Connection error: {e}")
+    print(f"❌ Request failed:")
+    print(f"Error type: {type(e).__name__}")
+    print(f"Error message: {str(e)}")
     sys.exit(1)
