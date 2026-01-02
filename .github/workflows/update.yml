@@ -11,7 +11,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4  # Updated to v4
       
     - name: Setup Python
       uses: actions/setup-python@v4
@@ -19,16 +19,27 @@ jobs:
         python-version: '3.10'
         
     - name: Install dependencies
-      run: pip install -r requirements.txt
-      
+      run: |
+        pip install requests pandas
+        echo "Dependencies installed"
+        
     - name: Run market data script
       env:
         WEB_APP_URL: ${{ secrets.WEB_APP_URL }}
-      run: python market_data.py
-      
-    - name: Upload logs on failure
+      run: |
+        echo "Starting market data script..."
+        python market_data.py
+        echo "Script completed with exit code: $?"
+        
+    - name: Upload debug info on failure
       if: failure()
-      uses: actions/upload-artifact@v3
-      with:
-        name: error-logs
-        path: ./*.log
+      run: |
+        echo "Workflow failed at $(date)"
+        echo "Creating debug info..."
+        ls -la
+        echo "--- Python version ---"
+        python --version
+        echo "--- Installed packages ---"
+        pip list
+        echo "--- Environment ---"
+        printenv | grep -E "(WEB_APP|GITHUB|RUNNER)" || true
